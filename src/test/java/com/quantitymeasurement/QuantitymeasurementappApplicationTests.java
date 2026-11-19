@@ -1,27 +1,48 @@
 
 /*
  * Class Name  : QuantitymeasurementappApplicationTests
- * Description : Validates the Spring Boot application context
- *               initialization and ensures that the application
- *               starts successfully without configuration errors.
+ * Description : Validates Spring Boot context and dependency injection.
  * Author      : Ashish Srivastava
- * Date        : 17/11/2026
+ * Date        : 19/11/2026
  */
 package com.quantitymeasurement;
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
-/**
- * Integration test class for the Spring Boot application.
- */
+import com.quantitymeasurement.controller.QuantityMeasurementController;
+import com.quantitymeasurement.repository.IQuantityMeasurementRepository;
+import com.quantitymeasurement.repository.QuantityMeasurementDatabaseRepository;
+import com.quantitymeasurement.service.IQuantityMeasurementService;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+
+import static org.junit.jupiter.api.Assertions.*;
+
 @SpringBootTest
+@ActiveProfiles("test")
 class QuantitymeasurementappApplicationTests {
 
-	/**
-	 * Verifies that the Spring Boot application context loads successfully.
-	 */
+	@Autowired
+	private IQuantityMeasurementRepository repository;
+
+	@Autowired
+	private IQuantityMeasurementService service;
+
+	@Autowired
+	private QuantityMeasurementController controller;
+
 	@Test
 	void contextLoads() {
-		// Test passes if the Spring application context starts successfully.
+		assertNotNull(repository);
+		assertNotNull(service);
+		assertNotNull(controller);
+	}
+
+	@Test
+	void testDatabaseRepositoryIsInjectedByDefault() {
+		assertInstanceOf(
+				QuantityMeasurementDatabaseRepository.class,
+				repository);
 	}
 }
