@@ -62,7 +62,7 @@ class QuantityMeasurementCacheRepositoryTest {
         assertNull(repository.findById("unknown-id"));
     }
 
-    // Tests rejection of null records.
+    // Tests rejection of null record.
     @Test
     void testSaveNullEntity() {
         assertThrows(
