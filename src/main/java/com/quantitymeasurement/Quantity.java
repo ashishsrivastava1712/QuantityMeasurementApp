@@ -80,7 +80,6 @@ public class Quantity<U extends IMeasurable> {
             throw new IllegalArgumentException("Measurement must be finite");
         }
     }
-
     private double performBaseArithmetic(
             Quantity<U> other,
             ArithmeticOperation operation,
@@ -88,6 +87,8 @@ public class Quantity<U extends IMeasurable> {
             boolean targetUnitRequired) {
 
         validateArithmeticOperands(other, targetUnit, targetUnitRequired);
+
+        unit.validateOperationSupport(operation.name());
 
         double firstBaseValue = convertToBaseUnit();
         double secondBaseValue = other.convertToBaseUnit();
@@ -155,7 +156,6 @@ public class Quantity<U extends IMeasurable> {
 
         return createResult(convertToBaseUnit(), targetUnit);
     }
-
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
