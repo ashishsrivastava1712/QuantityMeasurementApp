@@ -5,8 +5,8 @@
  * Author      : Ashish Srivastava
  * Date        : 19/11/2026
  */
-package com.quantitymeasurement;
-
+package com.quantitymeasurement.repository;
+import org.springframework.test.context.ActiveProfiles;
 import com.quantitymeasurement.repository.IQuantityMeasurementRepository;
 import com.quantitymeasurement.repository.QuantityMeasurementCacheRepository;
 
@@ -17,6 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(properties = "app.repository.type=CACHE")
+@ActiveProfiles("test")
 class RepositoryCacheProfileTest {
 
     @Autowired

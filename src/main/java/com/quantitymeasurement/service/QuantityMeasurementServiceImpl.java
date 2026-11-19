@@ -12,10 +12,12 @@ import com.quantitymeasurement.dto.QuantityDTO;
 import com.quantitymeasurement.entity.QuantityMeasurementEntity;
 import com.quantitymeasurement.exception.QuantityMeasurementException;
 import com.quantitymeasurement.repository.IQuantityMeasurementRepository;
-
+import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Objects;
 
+
+@Transactional
 public class QuantityMeasurementServiceImpl
         implements IQuantityMeasurementService {
 
