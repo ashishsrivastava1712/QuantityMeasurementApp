@@ -10,6 +10,7 @@ package com.quantitymeasurement;
 import com.quantitymeasurement.controller.QuantityMeasurementController;
 import com.quantitymeasurement.repository.IQuantityMeasurementRepository;
 import com.quantitymeasurement.repository.QuantityMeasurementDatabaseRepository;
+import com.quantitymeasurement.repository.QuantityMeasurementJpaRepositoryAdapter;
 import com.quantitymeasurement.service.IQuantityMeasurementService;
 
 import org.junit.jupiter.api.Test;
@@ -40,9 +41,10 @@ class QuantitymeasurementappApplicationTests {
 	}
 
 	@Test
-	void testDatabaseRepositoryIsInjectedByDefault() {
+	void testJpaRepositoryIsInjectedByDefault() {
 		assertInstanceOf(
-				QuantityMeasurementDatabaseRepository.class,
-				repository);
+				QuantityMeasurementJpaRepositoryAdapter.class,
+				repository
+		);
 	}
 }

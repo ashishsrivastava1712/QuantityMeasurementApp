@@ -1,60 +1,100 @@
 
-/*
- * Class Name  : QuantityMeasurementEntity
- * Description : Stores measurement operation details and its result or error.
- * Author      : Ashish Srivastava
- * Date        : 19/11/2026
- */
 package com.quantitymeasurement.entity;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 import java.io.Serializable;
 import java.util.UUID;
 
+@Entity
+@Table(name = "quantity_measurements")
 public class QuantityMeasurementEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private final String id;
-    private final double firstValue;
-    private final String firstUnit;
-    private final Double secondValue;
-    private final String secondUnit;
-    private final String operation;
-    private final Double result;
-    private final String resultUnit;
-    private final String errorMessage;
+    @Id
+    @Column(name = "id", nullable = false, length = 36)
+    private String id;
 
-    // Creates an entity for a single measurement.
+    @Column(name = "`first_value`", nullable = false)
+    private double firstValue;
+
+    @Column(name = "first_unit", nullable = false)
+    private String firstUnit;
+
+    @Column(name = "second_value")
+    private Double secondValue;
+
+    @Column(name = "second_unit")
+    private String secondUnit;
+
+    @Column(name = "operation")
+    private String operation;
+
+    @Column(name = "`result`")
+    private Double result;
+
+    @Column(name = "result_unit")
+    private String resultUnit;
+
+    @Column(name = "error_message", length = 2000)
+    private String errorMessage;
+
+    protected QuantityMeasurementEntity() {
+    }
     public QuantityMeasurementEntity(double value, String unit) {
         this(UUID.randomUUID().toString(), value, unit,
                 null, null, "CONVERSION", null, null, null);
     }
 
-    // Creates an entity for a successful binary operation.
     public QuantityMeasurementEntity(
-            double firstValue, String firstUnit,
-            double secondValue, String secondUnit,
-            String operation, double result, String resultUnit) {
+            double firstValue,
+            String firstUnit,
+            double secondValue,
+            String secondUnit,
+            String operation,
+            double result,
+            String resultUnit) {
 
         this(UUID.randomUUID().toString(), firstValue, firstUnit,
                 secondValue, secondUnit, operation, result, resultUnit, null);
     }
 
-    // Creates an entity containing an operation error.
     public QuantityMeasurementEntity(
-            double firstValue, String firstUnit,
-            Double secondValue, String secondUnit,
-            String operation, String errorMessage) {
+            double firstValue,
+            String firstUnit,
+            Double secondValue,
+            String secondUnit,
+            String operation,
+            String errorMessage) {
 
         this(UUID.randomUUID().toString(), firstValue, firstUnit,
                 secondValue, secondUnit, operation, null, null, errorMessage);
     }
 
-    // Initializes all entity fields.
+    public QuantityMeasurementEntity(
+            double value,
+            String unit,
+            String operation,
+            double result,
+            String resultUnit) {
+
+        this(UUID.randomUUID().toString(), value, unit,
+                null, null, operation, result, resultUnit, null);
+    }
+
     private QuantityMeasurementEntity(
-            String id, double firstValue, String firstUnit,
-            Double secondValue, String secondUnit,
-            String operation, Double result, String resultUnit,
+            String id,
+            double firstValue,
+            String firstUnit,
+            Double secondValue,
+            String secondUnit,
+            String operation,
+            Double result,
+            String resultUnit,
             String errorMessage) {
 
         this.id = id;
@@ -66,6 +106,22 @@ public class QuantityMeasurementEntity implements Serializable {
         this.result = result;
         this.resultUnit = resultUnit;
         this.errorMessage = errorMessage;
+    }
+
+    public static QuantityMeasurementEntity fromDatabase(
+            String id,
+            double firstValue,
+            String firstUnit,
+            Double secondValue,
+            String secondUnit,
+            String operation,
+            Double result,
+            String resultUnit,
+            String errorMessage) {
+
+        return new QuantityMeasurementEntity(
+                id, firstValue, firstUnit, secondValue,
+                secondUnit, operation, result, resultUnit, errorMessage);
     }
 
     public String getId() {
@@ -104,7 +160,6 @@ public class QuantityMeasurementEntity implements Serializable {
         return errorMessage;
     }
 
-    // Indicates whether the operation completed successfully.
     public boolean isSuccessful() {
         return errorMessage == null;
     }
@@ -123,38 +178,4 @@ public class QuantityMeasurementEntity implements Serializable {
                 ", errorMessage='" + errorMessage + '\'' +
                 '}';
     }
-    // Creates an entity for a successful unit conversion.
-    public QuantityMeasurementEntity(
-            double value, String unit,
-            String operation, double result, String resultUnit) {
-
-        this(UUID.randomUUID().toString(), value, unit,
-                null, null, operation, result, resultUnit, null);
-    }
-
-    // Reconstructs an existing measurement record from database data.
-    public static QuantityMeasurementEntity fromDatabase(
-            String id,
-            double firstValue,
-            String firstUnit,
-            Double secondValue,
-            String secondUnit,
-            String operation,
-            Double result,
-            String resultUnit,
-            String errorMessage) {
-
-        return new QuantityMeasurementEntity(
-                id,
-                firstValue,
-                firstUnit,
-                secondValue,
-                secondUnit,
-                operation,
-                result,
-                resultUnit,
-                errorMessage
-        );
-    }
-
 }

@@ -1,7 +1,7 @@
 
 /*
  * Class Name  : QuantityMeasurementController
- * Description : Handles measurement requests and delegates them to the service layer.
+ * Description : Exposes REST endpoints for quantity measurement operations.
  * Author      : Ashish Srivastava
  * Date        : 19/11/2026
  */
@@ -12,20 +12,95 @@ import com.quantitymeasurement.entity.QuantityMeasurementEntity;
 import com.quantitymeasurement.exception.QuantityMeasurementException;
 import com.quantitymeasurement.service.IQuantityMeasurementService;
 
+import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 
+@RestController
+@RequestMapping("/api/measurements")
 public class QuantityMeasurementController {
 
     private final IQuantityMeasurementService service;
 
-    // Injects the service through constructor dependency injection.
     public QuantityMeasurementController(IQuantityMeasurementService service) {
         this.service = Objects.requireNonNull(
                 service, "Service cannot be null");
     }
 
-    // Handles measurement conversion requests.
+    // REST endpoint: POST /api/measurements/convert
+    @PostMapping("/convert")
+    public ResponseEntity<QuantityMeasurementEntity> convertApi(
+            @RequestBody @Valid ConversionRequest request) {
+
+        if (request == null) {
+            throw new QuantityMeasurementException(
+                    "Conversion request cannot be null");
+        }
+
+        return ResponseEntity.ok(
+                convert(request.source(), request.targetUnit()));
+    }
+
+    // REST endpoint: POST /api/measurements/compare
+    @PostMapping("/compare")
+    public ResponseEntity<QuantityMeasurementEntity> compareApi(
+            @RequestBody @Valid ComparisonRequest request) {
+
+        if (request == null) {
+            throw new QuantityMeasurementException(
+                    "Comparison request cannot be null");
+        }
+
+        return ResponseEntity.ok(
+                compare(request.first(), request.second()));
+    }
+
+    // REST endpoint: POST /api/measurements/calculate
+    @PostMapping("/calculate")
+    public ResponseEntity<QuantityMeasurementEntity> calculateApi(
+            @RequestBody @Valid CalculationRequest request) {
+
+        if (request == null) {
+            throw new QuantityMeasurementException(
+                    "Calculation request cannot be null");
+        }
+
+        return ResponseEntity.ok(
+                calculate(
+                        request.first(),
+                        request.second(),
+                        request.operation()));
+    }
+
+    // REST endpoint: GET /api/measurements
+    @GetMapping
+    public ResponseEntity<List<QuantityMeasurementEntity>>
+    getAllMeasurementsApi() {
+
+        return ResponseEntity.ok(getAllMeasurements());
+    }
+
+    // REST endpoint: GET /api/measurements/{id}
+    @GetMapping("/{id}")
+    public ResponseEntity<QuantityMeasurementEntity> getMeasurementByIdApi(
+            @PathVariable("id") String id) {
+
+        QuantityMeasurementEntity measurement = getMeasurementById(id);
+
+        if (measurement == null) {
+            throw new NoSuchElementException(
+                    "Measurement not found with ID: " + id);
+        }
+
+        return ResponseEntity.ok(measurement);
+    }
+
+    // Existing application methods retained for backward compatibility.
+
     public QuantityMeasurementEntity convert(
             QuantityDTO source, String targetUnit) {
 
@@ -35,7 +110,6 @@ public class QuantityMeasurementController {
         return service.convert(source, targetUnit);
     }
 
-    // Handles measurement comparison requests.
     public QuantityMeasurementEntity compare(
             QuantityDTO first, QuantityDTO second) {
 
@@ -45,7 +119,6 @@ public class QuantityMeasurementController {
         return service.compare(first, second);
     }
 
-    // Handles arithmetic operation requests.
     public QuantityMeasurementEntity calculate(
             QuantityDTO first, QuantityDTO second, String operation) {
 
@@ -60,12 +133,10 @@ public class QuantityMeasurementController {
         return service.calculate(first, second, operation);
     }
 
-    // Retrieves all measurement records.
     public List<QuantityMeasurementEntity> getAllMeasurements() {
         return service.getAllMeasurements();
     }
 
-    // Retrieves a measurement record using its ID.
     public QuantityMeasurementEntity getMeasurementById(String id) {
         if (id == null || id.isBlank()) {
             throw new QuantityMeasurementException(
@@ -75,7 +146,6 @@ public class QuantityMeasurementController {
         return service.getMeasurementById(id);
     }
 
-    // Validates the incoming measurement request.
     private void validateRequest(QuantityDTO dto) {
         if (dto == null) {
             throw new QuantityMeasurementException(
@@ -93,11 +163,26 @@ public class QuantityMeasurementController {
         }
     }
 
-    // Validates the requested conversion target.
     private void validateTargetUnit(String targetUnit) {
         if (targetUnit == null || targetUnit.isBlank()) {
             throw new QuantityMeasurementException(
                     "Target unit cannot be empty");
         }
+    }
+
+    public record ConversionRequest(
+            @Valid QuantityDTO source,
+            String targetUnit) {
+    }
+
+    public record ComparisonRequest(
+            @Valid QuantityDTO first,
+            @Valid QuantityDTO second) {
+    }
+
+    public record CalculationRequest(
+            @Valid QuantityDTO first,
+            @Valid QuantityDTO second,
+            String operation) {
     }
 }
