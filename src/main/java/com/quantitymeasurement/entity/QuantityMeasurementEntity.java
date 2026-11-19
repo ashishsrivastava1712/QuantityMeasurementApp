@@ -131,4 +131,30 @@ public class QuantityMeasurementEntity implements Serializable {
         this(UUID.randomUUID().toString(), value, unit,
                 null, null, operation, result, resultUnit, null);
     }
+
+    // Reconstructs an existing measurement record from database data.
+    public static QuantityMeasurementEntity fromDatabase(
+            String id,
+            double firstValue,
+            String firstUnit,
+            Double secondValue,
+            String secondUnit,
+            String operation,
+            Double result,
+            String resultUnit,
+            String errorMessage) {
+
+        return new QuantityMeasurementEntity(
+                id,
+                firstValue,
+                firstUnit,
+                secondValue,
+                secondUnit,
+                operation,
+                result,
+                resultUnit,
+                errorMessage
+        );
+    }
+
 }
