@@ -170,7 +170,7 @@ public class Quantity<U extends IMeasurable> {
                 quantity.unit.convertToBaseUnit(quantity.value)
         ) == 0;
     }
-
+    //getting the hashcode
     @Override
     public int hashCode() {
         return Objects.hash(unit.getClass(), convertToBaseUnit());
